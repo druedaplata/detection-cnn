@@ -1,4 +1,5 @@
 import os
+import sys
 import cv2
 import caffe
 import numpy as np
@@ -99,7 +100,7 @@ def forward_pass(image, net, transformer):
 if __name__ == '__main__':
 
     # Caffe required files
-    caffemodel = 'snapshot_iter_23700.caffemodel'
+    caffemodel = 'snapshot_iter_70800.caffemodel'
     deploy_file = 'deploy.prototxt'
     mean_file = None
 
@@ -110,10 +111,9 @@ if __name__ == '__main__':
     _, channels, height, width = transformer.inputs['data']
 
     # Read user input
-    video_source = 'video.mp4'
+    video_source = sys.argv[1]
     video_capture = cv2.VideoCapture(video_source)
 
-    count = 0
     while video_capture.isOpened():
         ret, frame = video_capture.read()
         if not ret:
@@ -133,8 +133,7 @@ if __name__ == '__main__':
                     y1 = int(round(top))
                     x2 = int(round(right))
                     y2 = int(round(bottom))
-                    cv2.rectangle(image, (x1, y1), (x2, y2), (255, 255, 0), lineType=cv2.CV_AA)
-            count += 1
+                    cv2.rectangle(image, (x1, y1), (x2, y2), (255, 255, 0), 2, lineType=cv2.CV_AA)
             cv2.imshow('Video Input', image)
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 break
