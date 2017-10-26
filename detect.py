@@ -112,14 +112,19 @@ if __name__ == '__main__':
 
     # Read user input
     video_source = sys.argv[1]
+    # Not checking if video_source is correct
     video_capture = cv2.VideoCapture(video_source)
 
+    fourcc = cv2.cv.CV_FOURCC(*'XVID')
+    out_video = cv2.VideoWriter('output.avi', fourcc, 20.0, (width, height))
+
+    count = 0
     while video_capture.isOpened():
         ret, frame = video_capture.read()
         if not ret:
             break
-        image = resize_image(frame, height, width)
 
+        image = resize_image(frame, height, width)
         scores = forward_pass(image, net, transformer)
         if scores is None:
             print("No detections found.")
@@ -133,13 +138,15 @@ if __name__ == '__main__':
                     y1 = int(round(top))
                     x2 = int(round(right))
                     y2 = int(round(bottom))
-                    cv2.rectangle(image, (x1, y1), (x2, y2), (255, 255, 0), 2, lineType=cv2.CV_AA)
+                    cv2.rectangle(image, (x1, y1), (x2, y2), (0, 0, 255), 1, lineType=cv2.CV_AA)
+            out_video.write(image)
             cv2.imshow('Video Input', image)
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 break
 
     cv2.destroyAllWindows()
     video_capture.release()
+    out_video.release()
 
 
 
